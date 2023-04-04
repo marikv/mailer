@@ -30,14 +30,12 @@ class Transport extends Manager {
             ? $this->config['port']
             : ( isset($_ENV['MAIL_PORT']) ? $_ENV['MAIL_PORT'] : null );
 
-        $transport = \Swift_SmtpTransport::newInstance($host, $port);
-
         $encryption = isset($this->config['encryption'])
             ? $this->config['encryption']
             : ( isset($_ENV['MAIL_ENCRYPTION']) ? $_ENV['MAIL_ENCRYPTION'] : null );
 
-        if ($encryption)
-            $transport->setEncryption($encryption);
+        // $transport = \Swift_SmtpTransport::newInstance($host, $port);
+        $transport = new \Swift_SmtpTransport($host, $port, $encryption);
 
         // Once we have the transport we will check for the presence of a username
         // and password. If we have it we will set the credentials on the Swift
@@ -72,7 +70,7 @@ class Transport extends Manager {
      * @return \Swift_SendmailTransport
      */
     protected function createSendmailDriver() {
-        return \Swift_SendmailTransport::newInstance(
+        return new \Swift_SendmailTransport(
             isset($this->config['command']) ?: isset($_ENV['MAIL_COMMAND']) ? $_ENV['MAIL_COMMAND'] : null
         );
     }
@@ -83,7 +81,7 @@ class Transport extends Manager {
      * @return \Swift_MailTransport
      */
     protected function createMailDriver() {
-        return \Swift_MailTransport::newInstance();
+        return new \Swift_MailTransport::newInstance();
     }
 
     /**
